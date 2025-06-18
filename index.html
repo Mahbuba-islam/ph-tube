@@ -12,7 +12,24 @@
     <header class="my-11 text-center flex-col justify-center items-center ">
         <div class=" md:w-full w-1/2 justify-between space-y-4 md:space-x-2 md:menu-horizontal menu-vertical items-center">
           <img class=" w-[200px] object-contain" src="./assets/Logo.png" alt="">
-        <button class="btn bg-gray-300 text-xs md:text-sm">Sort by view</button>
+
+          <!-- search input -->
+      <label class="input">
+  <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <g
+      stroke-linejoin="round"
+      stroke-linecap="round"
+      stroke-width="2.5"
+      fill="none"
+      stroke="currentColor"
+    >
+      <circle cx="11" cy="11" r="8"></circle>
+      <path d="m21 21-4.3-4.3"></path>
+    </g>
+  </svg>
+  <input id="searchInput" type="search" required placeholder="Search" />
+</label>
+       <div id="sortId" class="btn">sort</div>
         <button class="btn bg-[#d5345c] text-white">Blog</button>
         </div>
        
