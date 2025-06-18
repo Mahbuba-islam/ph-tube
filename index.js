@@ -1,72 +1,125 @@
 // get time
-function getTimeString(time){
-const day = parseInt(time/86400)
-let remainingSecond = parseInt(time%86400)
-const hour = parseInt(remainingSecond/3600)
-remainingSecond = parseInt(remainingSecond%3600)
-const minute = parseInt(remainingSecond/60)
-remainingSecond = parseInt(remainingSecond%60)
-return ` ${hour} hour ${minute} minute ${remainingSecond} second ago`
+function getTimeString(time) {
+    const day = parseInt(time / 86400)
+    let remainingSecond = parseInt(time % 86400)
+    const hour = parseInt(remainingSecond / 3600)
+    remainingSecond = parseInt(remainingSecond % 3600)
+    const minute = parseInt(remainingSecond / 60)
+    remainingSecond = parseInt(remainingSecond % 60)
+    return ` ${hour} hour ${minute} minute ${remainingSecond} second ago`
 }
 console.log(getTimeString(5678))
+
+// remove active class
+const removeActive = () => {
+    const buttons = document.getElementsByClassName('active-btn')
+    for (btn of buttons) {
+        btn.classList.remove('activeColor')
+    }
+
+
+}
+
+
+
 
 // fetch load and display categories on html
 console.log('connected')
 // fetch the categories data
 const loadCategories = () => {
- fetch('https://openapi.programming-hero.com/api/phero-tube/categories')
- .then(res => res.json())
- .then (data => displayCategories(data.categories))
- .catch(err => console.log(err))
+    fetch('https://openapi.programming-hero.com/api/phero-tube/categories')
+        .then(res => res.json())
+        .then(data => displayCategories(data.categories))
+        .catch(err => console.log(err))
 }
 
 
 // display the categories data
 const displayCategories = (categories) => {
     const allCategories = document.getElementById('allCategories')
-    categories.forEach((category,index) => {
-    console.log(category)
-    // display all categories
-    const buttonContainer = document.createElement('div')
-    buttonContainer.innerHTML = `<button onClick="loadCategoriesById(${category.category_id})" class="btn">${category.category}</button>`
-    console.log(index)
-//    if (index === 0) {
-//     button.className = 'btn bg-[#d5345c] text-white';
-// } else {
-//     button.className= 'btn bg-gray-300';
-// }
+    categories.forEach((category, index) => {
+        console.log(category)
+        // display all categories
+        const buttonContainer = document.createElement('div')
+        buttonContainer.innerHTML = `<button id="btn-${category.category_id}" onClick="loadCategoriesById(${category.category_id})" 
+    class="active-btn btn">${category.category}</button>`
+        console.log(index)
+        //    if (index === 0) {
+        //     button.className = 'btn bg-[#d5345c] text-white';
+        // } else {
+        //     button.className= 'btn bg-gray-300';
+        // }
 
- allCategories.appendChild(buttonContainer)
-    
-  });
+        allCategories.appendChild(buttonContainer)
+
+    });
 
 
 }
 
 // display data by categories
 const loadCategoriesById = (id) => {
-     fetch(`https://openapi.programming-hero.com/api/phero-tube/category/${id}`)
- .then(res => res.json())
- .then (data => displayCards(data.category
-))
- .catch(err => console.log(err))
+    fetch(`https://openapi.programming-hero.com/api/phero-tube/category/${id}`)
+        .then(res => res.json())
+        .then(data => {
+            removeActive()
+            const activeBtn = document.getElementById(`btn-${id}`)
+            activeBtn.classList.add('activeColor')
+            displayCards(data.category
+            )
+        })
+        .catch(err => console.log(err))
 }
 
 
 const loadCards = () => {
- fetch('https://openapi.programming-hero.com/api/phero-tube/videos')
- .then(res => res.json())
- .then (data => displayCards(data.videos))
- .catch(err => console.log(err))
+    fetch('https://openapi.programming-hero.com/api/phero-tube/videos')
+        .then(res => res.json())
+        .then(data => displayCards(data.videos))
+        .catch(err => console.log(err))
 }
 
 
+// load video details
+const loadDetails= async(videoId)=>{
+  console.log(videoId)
+  const uri = `https://openapi.programming-hero.com/api/phero-tube/video/${videoId}`
+   const res = await fetch(uri)
+   const data = await res.json()
+  displayVideoDetails(data.video)  
+
+        
+
+}
+
+const displayVideoDetails = (video) => {
+  console.log(video)
+ const modalDetails = document.getElementById('modalDetails')
+ modalDetails.innerHTML = 
+ `
+ <img src= '${video.thumbnail}'/>
+ <p class="py-4">${video.description}</p>
+    <div class="modal-action">
+      <form method="dialog">
+       <button class="btn">Close</button>
+      </form>
+    </div>
+ `
+//   show modal
+// way-1
+//  document.getElementById('modal-btn').click()
+// way-2
+document.getElementById('customModal').showModal()
+
+
+}
+
 // display the categories data
 const displayCards = (videos) => {
-     console.log(videos)
+    console.log(videos)
     const allCards = document.getElementById('cards')
     allCards.innerHTML = ''
-    if(videos.length === 0){
+    if (videos.length === 0) {
         allCards.classList.remove('grid')
         allCards.innerHTML = `<div class="w-full flex flex-col gap-4 justify-center items-center">
          <img src="./assets/Icon.png" alt="">
@@ -74,20 +127,20 @@ const displayCards = (videos) => {
          </div>`
         return;
     }
-    else{
+    else {
         allCards.classList.add('grid')
     }
-   videos.forEach((video) => {
-    console.log(video.thumbnail)
-    // display all categories
-    const div = document.createElement('div')
-     div.innerHTML = `
+    videos.forEach((video) => {
+        console.log(video.thumbnail)
+        // display all categories
+        const div = document.createElement('div')
+        div.innerHTML = `
          <div class="card bg-base-100 w-80 md:w-[340px] shadow-sm mx-auto ">
          <div class="relative">
          <img class="h-[214px] w-full object-cover "
       src="${video.thumbnail}"/>
-      ${video.others.posted_date? `<span class="absolute right-5 bottom-5 text-white bg-black rounded-lg px-10 py-1 text-xs">
-        ${getTimeString(video.others.posted_date)}</span>` :''}
+      ${video.others.posted_date ? `<span class="absolute right-5 bottom-5 text-white bg-black rounded-lg px-10 py-1 text-xs">
+        ${getTimeString(video.others.posted_date)}</span>` : ''}
          </div>
   
       
@@ -117,14 +170,17 @@ const displayCards = (videos) => {
       <p>${video.others.views}</p> 
     </div>
   </div>
+  <button onClick="loadDetails('${video.video_id
+}')" class="btn btn-sm btn-error text-white">Details</button>
 </div>
+
         
         `;
 
-       
- allCards.appendChild(div)
-    
-  });
+
+        allCards.appendChild(div)
+
+    });
 
 
 }
@@ -134,3 +190,4 @@ const displayCards = (videos) => {
 
 loadCategories()
 loadCards()
+loadDetails()
